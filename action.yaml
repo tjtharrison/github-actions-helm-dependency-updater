@@ -1,0 +1,56 @@
+name: "github-actions-helm-dependency-updater"
+description: "GitHub action to find available updates for Helm dependencies and create a PR to update"
+branding:
+  color: "green"
+  icon: "book-open"
+inputs:
+  CHART_LOCATION:
+    description: "The location of the Chart.yaml file"
+    required: true
+    type: string
+    default: "Chart.yaml"
+  UPDATE_ON:
+    description: 'A comma separated list of types of version to update on (eg "major,minor,patch")'
+    required: true
+    type: string
+    default: "minor,patch"
+  OCI_USERNAME:
+    description: "The username for the OCI registry"
+    required: true
+    type: string
+    default: ""
+  OCI_PASSWORD:
+    description: "The password for the OCI registry"
+    required: true
+    type: string
+    default: ""
+runs:
+  using: "composite"
+  steps:
+    - name: "Validate OUTPUT_MODE"
+      shell: bash
+      run: |
+        python3 ${{ github.action_path}}/bin/version_validate.py ${{ inputs.UPDATE_ON }}
+    - name: "Check for updates"
+      id: "check-for-updates"
+      shell: bash
+      env:
+        CHART_LOCATION: ${{ inputs.CHART_LOCATION }}
+        UPDATE_ON: ${{ inputs.UPDATE_ON }}
+        OCI_USERNAME: ${{ inputs.OCI_USERNAME }}
+        OCI_PASSWORD: ${{ inputs.OCI_PASSWORD }}
+      run: |
+        python3 ${{ github.action_path}}/bin/main.py
+    - uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: Updated github-action-docs
+        branch: "bump-dependencies"
+    # Create pull request
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit-message: "chore(release) bump dependencies"
+        title: "chore(release) bump dependencies"
+        body: "chore(release) bump dependencies"
+        branch: "bump-dependencies"
