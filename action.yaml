@@ -65,3 +65,4 @@ runs:
         title: "chore(release) bump dependencies"
         body: "chore(release) bump dependencies"
         branch: "bump-dependencies"
+        base: "main"
