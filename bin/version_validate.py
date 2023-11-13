@@ -1,4 +1,6 @@
+"""Script to validate versioning mode provided to GitHub action"""
 import sys
+
 
 def main(args):
     """
@@ -11,16 +13,17 @@ def main(args):
     accepted_versions = ["major", "minor", "patch", "pre-release"]
 
     if len(args) < 2:
-        print('Requires input, eg `python version_validate.py "["major","minor", "patch", "pre-release"]"`')
+        print(
+            'Requires input, eg '
+            '`python version_validate.py "["major","minor", "patch", "pre-release"]"`'
+        )
         sys.exit(1)
 
     arg_list = args[1].split(",")
 
     for arg in arg_list:
         if arg not in accepted_versions:
-            print(
-                "Provided value " + str(arg) + " not in " + str(accepted_versions)
-            )
+            print("Provided value " + str(arg) + " not in " + str(accepted_versions))
             sys.exit(1)
 
 

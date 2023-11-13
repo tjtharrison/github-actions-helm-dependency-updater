@@ -1,18 +1,25 @@
-import os
-
-import yaml
-import requests
-import dotenv
+"""Script to be used by GitHub action to update chart dependencies."""
 import json
+import os
 from distutils.version import StrictVersion
+
+import dotenv
+import requests
+import yaml
 
 dotenv.load_dotenv()
 
 UPDATE_ON = ["major", "minor", "patch"]
 CHART_LOCATION = os.environ.get("CHART_LOCATION")
 
+
 def open_chart():
-    with open(CHART_LOCATION, "r") as chart:
+    """Open the chart.
+
+    Returns:
+        dict: The chart.
+    """
+    with open(CHART_LOCATION, "r", encoding="UTF-8") as chart:
         return yaml.safe_load(chart)
 
 
@@ -49,7 +56,9 @@ if __name__ == "__main__":
 
             # Public repository
             public_json = requests.get(
-                f'{dependency["repository"]}/index.yaml')
+                f'{dependency["repository"]}/index.yaml',
+                timeout=10
+            )
 
             if public_json.status_code == 200:
                 available_versions = []
@@ -69,17 +78,18 @@ if __name__ == "__main__":
                 print(f"Latest version: {latest_version}")
 
                 if dependency["version"] != latest_version:
+                    UPDATE_TYPE = compare_versions(
+                        dependency["version"].split("."), latest_version.split(".")
+                    )
 
-                    update_type = compare_versions(dependency["version"].split("."), latest_version.split("."))
-
-                    if update_type in UPDATE_ON:
+                    if UPDATE_TYPE in UPDATE_ON:
                         print(f"Updating {dependency['name']} to {latest_version}")
                         dependency["version"] = latest_version
 
                         updated_dependencies.append(dependency["name"])
 
                         print(f"Updating {CHART_LOCATION}")
-                        with open(CHART_LOCATION, "w") as chart:
+                        with open(CHART_LOCATION, "w", encoding="UTF-8") as chart:
                             yaml.dump(current_chart, chart, sort_keys=False)
                 else:
                     print("Running the latest version")
@@ -93,7 +103,8 @@ if __name__ == "__main__":
                 f'https://{os.environ.get("OCI_USERNAME")}:{os.environ.get("OCI_PASSWORD")}@',
             )
             oci_response = requests.get(
-                f'{registry_address}/v2/{dependency["name"]}/tags/list'
+                f'{registry_address}/v2/{dependency["name"]}/tags/list',
+                timeout=10
             ).text
 
             available_versions = json.loads(oci_response)["tags"]
@@ -101,17 +112,17 @@ if __name__ == "__main__":
 
             latest_version = available_versions[0]
 
-            update_type = compare_versions(
+            UPDATE_TYPE = compare_versions(
                 dependency["version"].split("."), latest_version.split(".")
             )
 
-            if update_type in UPDATE_ON:
+            if UPDATE_TYPE in UPDATE_ON:
                 print(f"Updating {dependency['name']} to {latest_version}")
                 dependency["version"] = latest_version
 
                 updated_dependencies.append(dependency["name"])
                 print(f"Updating {CHART_LOCATION}")
-                with open(CHART_LOCATION, "w") as chart:
+                with open(CHART_LOCATION, "w", encoding="UTF-8") as chart:
                     yaml.dump(current_chart, chart, sort_keys=False)
 
     if len(updated_dependencies) > 0:
