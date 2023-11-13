@@ -56,13 +56,13 @@ runs:
         commit_message: Updated github-action-docs
         branch: "bump-dependencies"
         create_branch: true
-    # Create pull request
-    - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v3
-      with:
-        token: ${{ inputs.GITHUB_TOKEN }}
-        commit-message: "chore(release) bump dependencies"
-        title: "chore(release) bump dependencies"
-        body: "chore(release) bump dependencies"
-        branch: "bump-dependencies"
-        base: "main"
+#    # Create pull request
+#    - name: Create Pull Request
+#      uses: peter-evans/create-pull-request@v3
+#      with:
+#        token: ${{ inputs.GITHUB_TOKEN }}
+#        commit-message: "chore(release) bump dependencies"
+#        title: "chore(release) bump dependencies"
+#        body: "chore(release) bump dependencies"
+#        branch: "bump-dependencies"
+#        base: "main"
