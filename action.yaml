@@ -37,6 +37,7 @@ runs:
       run: |
         python3 ${{ github.action_path}}/bin/version_validate.py ${{ inputs.UPDATE_ON }}
     - name: Install dependencies
+      shell: bash
       run: |
         python3 -m pip install --upgrade pip
         python3 -m pip install -r ${{ github.action_path}}/requirements.txt
