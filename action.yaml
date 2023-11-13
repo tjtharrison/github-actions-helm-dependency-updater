@@ -36,6 +36,10 @@ runs:
       shell: bash
       run: |
         python3 ${{ github.action_path}}/bin/version_validate.py ${{ inputs.UPDATE_ON }}
+    - name: Install dependencies
+      run: |
+        python3 -m pip install --upgrade pip
+        python3 -m pip install -r ${{ github.action_path}}/requirements.txt
     - name: "Check for updates"
       id: "check-for-updates"
       shell: bash
