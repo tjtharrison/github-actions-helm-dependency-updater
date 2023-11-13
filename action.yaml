@@ -53,7 +53,7 @@ runs:
         python3 ${{ github.action_path}}/bin/main.py
     - uses: stefanzweifel/git-auto-commit-action@v4
       with:
-        commit_message: Updated github-action-docs
+        commit_message: Updated helm dependencies
         branch: "bump-dependencies"
         create_branch: true
     # GitHub script to create a pull request
