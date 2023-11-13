@@ -19,8 +19,8 @@ def open_chart():
     Returns:
         dict: The chart.
     """
-    with open(CHART_LOCATION, "r", encoding="UTF-8") as chart:
-        return yaml.safe_load(chart)
+    with open(CHART_LOCATION, "r", encoding="UTF-8") as current_chart_file:
+        return yaml.safe_load(current_chart_file)
 
 
 def compare_versions(current_version, latest_version):
@@ -89,8 +89,8 @@ if __name__ == "__main__":
                         updated_dependencies.append(dependency["name"])
 
                         print(f"Updating {CHART_LOCATION}")
-                        with open(CHART_LOCATION, "w", encoding="UTF-8") as chart:
-                            yaml.dump(current_chart, chart, sort_keys=False)
+                        with open(CHART_LOCATION, "w", encoding="UTF-8") as chart_file:
+                            yaml.dump(current_chart, chart_file, sort_keys=False)
                 else:
                     print("Running the latest version")
 

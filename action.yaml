@@ -56,12 +56,22 @@ runs:
         commit_message: Updated github-action-docs
         branch: "bump-dependencies"
         create_branch: true
-    # Create pull request
+    # GitHub script to create a pull request
     - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v3
+      uses: actions/github-script@v3
       with:
-        token: ${{ inputs.GITHUB_TOKEN }}
-        title: "chore(release) bump dependencies"
-        body: "chore(release) bump dependencies"
-        branch: "bump-dependencies"
-        base: "main"
+          github-token: ${{ inputs.GITHUB_TOKEN }}
+          script: |
+            const title = "chore(release) bump dependencies";
+            const body = "chore(release) bump dependencies";
+            const head = "bump-dependencies";
+            const base = "main";
+            const { data: pullRequest } = await github.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              head,
+              base,
+            });
+            core.setOutput("pull-request", pullRequest);
