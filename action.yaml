@@ -24,6 +24,11 @@ inputs:
     required: true
     type: string
     default: ""
+  GITHUB_TOKEN:
+    description: "The GitHub token to use for creating the PR"
+    required: true
+    type: string
+    default: ""
 runs:
   using: "composite"
   steps:
@@ -49,7 +54,7 @@ runs:
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v3
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ inputs.GITHUB_TOKEN }}
         commit-message: "chore(release) bump dependencies"
         title: "chore(release) bump dependencies"
         body: "chore(release) bump dependencies"
