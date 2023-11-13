@@ -55,6 +55,7 @@ runs:
       with:
         commit_message: Updated github-action-docs
         branch: "bump-dependencies"
+        create_branch: true
     # Create pull request
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v3
