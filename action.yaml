@@ -52,12 +52,14 @@ runs:
       run: |
         python3 ${{ github.action_path}}/bin/main.py
     - uses: stefanzweifel/git-auto-commit-action@v4
+      id: git-auto-commit
       with:
         commit_message: Updated helm dependencies
         branch: "bump-dependencies"
         create_branch: true
     # GitHub script to create a pull request
     - name: Create Pull Request
+      if: ${{ steps.git-auto-commit.outputs.changes_detected }}
       uses: actions/github-script@v3
       with:
           github-token: ${{ inputs.GITHUB_TOKEN }}
