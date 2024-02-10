@@ -63,12 +63,8 @@ runs:
         commit_message: Updated helm dependencies
         branch: "${{ steps.set-branch.outputs.branch_name }}"
         create_branch: true
-    # GitHub script to create a pull request
-    - name: debug echo
-      shell:  bash
-      run: echo ${{ steps.git-auto-commit.outputs.changes_detected }}
     - name: Create Pull Request
-      if: ${{ steps.git-auto-commit.outputs.changes_detected }} == 'false'
+      if: steps.git-auto-commit.outputs.changes_detected != 'false'
       uses: actions/github-script@v3
       with:
           github-token: ${{ inputs.GITHUB_TOKEN }}
@@ -87,7 +83,7 @@ runs:
             });
             core.setOutput("pull-request", pullRequest);
     - name: "Delete branch"
-      if: steps.git-auto-commit.outputs.changes_detected == 'false'
+      if: steps.git-auto-commit.outputs.changes_detected != 'false'
       shell: bash
       run: |
         git push origin --delete "${{ steps.set-branch.outputs.branch_name }}"
