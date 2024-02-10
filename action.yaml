@@ -65,7 +65,7 @@ runs:
         create_branch: true
     # GitHub script to create a pull request
     - name: Create Pull Request
-      if: steps.git-auto-commit.outputs.changes_detected == 'false'
+      if: ${{ steps.git-auto-commit.outputs.changes_detected }} == 'false'
       uses: actions/github-script@v3
       with:
           github-token: ${{ inputs.GITHUB_TOKEN }}
