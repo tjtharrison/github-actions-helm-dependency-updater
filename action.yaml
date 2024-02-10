@@ -55,7 +55,7 @@ runs:
       id: git-auto-commit
       with:
         commit_message: Updated helm dependencies
-        branch: "bump-dependencies"
+        branch: "bump-dependencies-${{ inputs.CHART_LOCATION }}"
         create_branch: true
     # GitHub script to create a pull request
     - name: Create Pull Request
@@ -66,7 +66,7 @@ runs:
           script: |
             const title = "chore(release) bump dependencies";
             const body = "chore(release) bump dependencies";
-            const head = "bump-dependencies";
+            const head = "bump-dependencies-${{ inputs.CHART_LOCATION }}";
             const base = "main";
             const { data: pullRequest } = await github.pulls.create({
               owner: context.repo.owner,
@@ -81,5 +81,5 @@ runs:
       if: steps.git-auto-commit.outputs.changes_detected == 'false'
       shell: bash
       run: |
-        git push origin --delete bump-dependencies
-        git branch -d bump-dependencies
+        git push origin --delete "bump-dependencies-${{ inputs.CHART_LOCATION }}"
+        git branch -d "bump-dependencies-${{ inputs.CHART_LOCATION }}"
