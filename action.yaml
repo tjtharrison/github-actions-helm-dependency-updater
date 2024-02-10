@@ -64,6 +64,8 @@ runs:
         branch: "${{ steps.set-branch.outputs.branch_name }}"
         create_branch: true
     # GitHub script to create a pull request
+    - name: debug echo
+      run: echo ${{ steps.git-auto-commit.outputs.changes_detected }}
     - name: Create Pull Request
       if: ${{ steps.git-auto-commit.outputs.changes_detected }} == 'false'
       uses: actions/github-script@v3
