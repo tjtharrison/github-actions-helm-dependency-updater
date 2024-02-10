@@ -79,6 +79,7 @@ runs:
             core.setOutput("pull-request", pullRequest);
     - name: "Delete branch"
       if: steps.git-auto-commit.outputs.changes_detected == 'false'
+      shell: bash
       run: |
         git push origin --delete bump-dependencies
         git branch -d bump-dependencies
