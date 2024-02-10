@@ -41,6 +41,12 @@ runs:
       run: |
         python3 -m pip install --upgrade pip
         python3 -m pip install -r ${{ github.action_path}}/requirements.txt
+    - name: set branch
+      id: set-branch
+      shell: bash
+      run: |
+        branch_name=$(dirname ${{ inputs.CHART_LOCATION }} | sed 's/\//-/g')
+        echo "branch_name=bump-dependencies-$branch_name" >> $GITHUB_OUTPUT
     - name: "Check for updates"
       id: "check-for-updates"
       shell: bash
@@ -55,7 +61,7 @@ runs:
       id: git-auto-commit
       with:
         commit_message: Updated helm dependencies
-        branch: "bump-dependencies-${{ inputs.CHART_LOCATION }}"
+        branch: "${{ steps.set-branch.outputs.branch_name }}"
         create_branch: true
     # GitHub script to create a pull request
     - name: Create Pull Request
@@ -66,7 +72,7 @@ runs:
           script: |
             const title = "chore(release) bump dependencies";
             const body = "chore(release) bump dependencies";
-            const head = "bump-dependencies-${{ inputs.CHART_LOCATION }}";
+            const head = "${{ steps.set-branch.outputs.branch_name }}";
             const base = "main";
             const { data: pullRequest } = await github.pulls.create({
               owner: context.repo.owner,
@@ -81,5 +87,5 @@ runs:
       if: steps.git-auto-commit.outputs.changes_detected == 'false'
       shell: bash
       run: |
-        git push origin --delete "bump-dependencies-${{ inputs.CHART_LOCATION }}"
-        git branch -d "bump-dependencies-${{ inputs.CHART_LOCATION }}"
+        git push origin --delete "${{ steps.set-branch.outputs.branch_name }}"
+        git branch -d "${{ steps.set-branch.outputs.branch_name }}"
